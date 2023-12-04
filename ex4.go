@@ -18,13 +18,24 @@ func main() {
 
 	println(numbers)
 
-	score := 0
+	index := 0
+	occurencesMap := make(map[int]int)
 
-	for i, winningNumbers := range winningNumbers {
-		score += getCardScore(winningNumbers, numbers[i])
+	ocurrencesCount := 0
+
+	for index < len(winningNumbers) {
+		score := getMatchingNumbersCount(winningNumbers[index], numbers[index])
+		for b := 0; b <= occurencesMap[index]; b++ {
+			for i := 1; i <= score; i++ {
+				occurencesMap[index+i] = occurencesMap[index+i] + 1
+			}
+		}
+		ocurrencesCount += occurencesMap[index]
+		index++
 	}
 
-	print(score)
+	println(ocurrencesCount + len(winningNumbers))
+
 }
 
 func extractArrays(input string) ([][]int, [][]int, error) {
@@ -83,6 +94,16 @@ func isInArray(target int, arr []int) bool {
 		}
 	}
 	return false
+}
+
+func getMatchingNumbersCount(winningNumbers []int, numbers []int) int {
+	count := 0
+	for _, num := range numbers {
+		if isInArray(num, winningNumbers) {
+			count++
+		}
+	}
+	return count
 }
 
 func getCardScore(winningNumbers []int, numbers []int) int {
