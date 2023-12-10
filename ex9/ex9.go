@@ -17,15 +17,19 @@ func main() {
 
 	data := readDataToArr(file)
 
-	resultSum := 0
+	part1Sum := 0
+	part2Sum := 0
 
 	for _, line := range data {
-		resultSum += processLine(line)
+		leftNumber, rightNumber := processLine(line)
+		part1Sum += rightNumber
+		part2Sum += leftNumber
 	}
-	println(resultSum)
+	println(part1Sum)
+	println(part2Sum)
 }
 
-func processLine(line []int) int {
+func processLine(line []int) (int, int) {
 	lineUnderlines := [][]int{line}
 	for {
 		underline, allZero := calculateDifferences(line)
@@ -36,6 +40,8 @@ func processLine(line []int) int {
 			break
 		}
 	}
+
+	//part 1
 	lastUnderlineIndex := len(lineUnderlines) - 1
 	lineUnderlines[lastUnderlineIndex] = append(lineUnderlines[lastUnderlineIndex], 0)
 	index := len(lineUnderlines) - 2
@@ -47,7 +53,20 @@ func processLine(line []int) int {
 		increase = newElem
 		index--
 	}
-	return lineUnderlines[0][len(lineUnderlines[0])-1]
+
+	//part 2
+	lineUnderlines[lastUnderlineIndex] = append([]int{0}, lineUnderlines[lastUnderlineIndex]...)
+	index = len(lineUnderlines) - 2
+
+	decrease := 0
+	for index >= 0 {
+		newElem := lineUnderlines[index][0] - decrease
+		lineUnderlines[index] = append([]int{newElem}, lineUnderlines[index]...)
+		decrease = newElem
+		index--
+	}
+
+	return lineUnderlines[0][len(lineUnderlines[0])-1], lineUnderlines[0][0]
 }
 
 func calculateDifferences(line []int) ([]int, bool) {
